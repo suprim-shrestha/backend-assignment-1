@@ -3,34 +3,46 @@ import { ITodo } from "../interface/todo";
 const todos: ITodo[] = [
   {
     id: 1,
-    title: "Task 1",
+    title: "Task 1 of User 1",
     completed: false,
+    userId: 1,
   },
   {
     id: 2,
-    title: "Task 2",
+    title: "Task 2 of User 1",
     completed: false,
+    userId: 1,
   },
   {
     id: 3,
-    title: "Task 3",
+    title: "Task 1 of User 2",
     completed: false,
+    userId: 2,
+  },
+  {
+    id: 4,
+    title: "Task 1 of User 3",
+    completed: false,
+    userId: 3,
   },
 ];
 
-export function getTodos() {
-  return todos;
+export function getTodos(userId: number) {
+  const todoList = todos.filter((todo) => todo.userId === userId);
+  return todoList;
 }
 
-export function getTodoById(id: number) {
-  return todos.find((todo) => todo.id === id) || null;
+export function getTodoById(id: number, userId: number) {
+  const filteredTodo = todos.filter((todo) => todo.userId === userId);
+  return filteredTodo.find((todo) => todo.id === id) || null;
 }
 
-export function createTodo(title: string) {
+export function createTodo(title: string, userId: number) {
   const newTodo = {
     id: todos[todos.length - 1].id + 1,
     title,
     completed: false,
+    userId,
   };
 
   todos.push(newTodo);
@@ -38,8 +50,8 @@ export function createTodo(title: string) {
   return newTodo;
 }
 
-export function updateTodoById(id: number) {
-  const todo = getTodoById(id);
+export function updateTodoById(id: number, userId: number) {
+  const todo = getTodoById(id, userId);
   if (!todo) return null;
 
   todo.completed = !todo.completed;
@@ -47,8 +59,9 @@ export function updateTodoById(id: number) {
   return todo;
 }
 
-export function deleteTodoById(id: number) {
-  const todoIndex = todos.findIndex((todo) => todo.id === id);
+export function deleteTodoById(id: number, userId: number) {
+  const todoToDelete = getTodoById(id, userId);
+  const todoIndex = todos.findIndex((todo) => todoToDelete === todo);
 
   if (todoIndex === -1) return null;
 

@@ -2,24 +2,28 @@ import { Request, Response } from "express";
 
 import * as todoService from "../services/todo";
 
-export async function createTodo(req: Request, res: Response) {
+export async function createTodo(req: any, res: Response) {
   const { title } = req.body;
+  const user = req.user;
+  console.log(user);
 
-  const todo = await todoService.createTodo(title);
+  const todo = await todoService.createTodo(title, user.id);
 
   res.status(201).json(todo);
 }
 
-export async function getTodos(req: Request, res: Response) {
-  const todos = await todoService.getTodos();
+export async function getTodos(req: any, res: Response) {
+  const user = req.user;
+  const todos = await todoService.getTodos(user.id);
 
   res.json(todos);
 }
 
-export async function getTodoById(req: Request, res: Response) {
+export async function getTodoById(req: any, res: Response) {
+  const user = req.user;
   const { id } = req.params;
 
-  const todo = await todoService.getTodoById(parseInt(id));
+  const todo = await todoService.getTodoById(parseInt(id), user.id);
 
   if (!todo) {
     return res.status(404).json({ message: `Todo with id: ${id} not found` });
@@ -28,10 +32,11 @@ export async function getTodoById(req: Request, res: Response) {
   res.json(todo);
 }
 
-export async function updateTodoById(req: Request, res: Response) {
+export async function updateTodoById(req: any, res: Response) {
+  const user = req.user;
   const { id } = req.params;
 
-  const todo = await todoService.updateTodoById(parseInt(id));
+  const todo = await todoService.updateTodoById(parseInt(id), user.id);
 
   if (!todo) {
     return res.status(404).json({ message: `Todo with id: ${id} not found` });
@@ -40,10 +45,11 @@ export async function updateTodoById(req: Request, res: Response) {
   res.json(todo);
 }
 
-export async function deleteTodoById(req: Request, res: Response) {
+export async function deleteTodoById(req: any, res: Response) {
+  const user = req.user;
   const { id } = req.params;
 
-  const todo = await todoService.deleteTodoById(parseInt(id));
+  const todo = await todoService.deleteTodoById(parseInt(id), user.id);
 
   if (!todo) {
     return res.status(404).json({ message: `Todo with id: ${id} not found` });
