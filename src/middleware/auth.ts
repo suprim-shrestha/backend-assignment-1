@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
 import config from "../config";
+import { getUserByUsername } from "../model/user";
 
 export const auth = async (req: any, res: Response, next: NextFunction) => {
   try {
@@ -11,9 +12,17 @@ export const auth = async (req: any, res: Response, next: NextFunction) => {
       return res.status(401).json({ message: "Token not Found" });
     }
 
-    const decode = jwt.verify(token, config.jwt.accessTokenSecret!);
+    const payload: any = jwt.verify(token, config.jwt.accessTokenSecret!);
 
-    req.user = decode;
+    if (!payload || payload.tokenType == "refreshToken") {
+      throw new Error("Wrong token type");
+    }
+    const user = getUserByUsername(payload.username);
+    if (user?.accessToken === token) {
+      req.user = user;
+    } else {
+      throw new Error("Authentication failed");
+    }
 
     next();
   } catch (err) {

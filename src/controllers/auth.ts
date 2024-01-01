@@ -46,3 +46,12 @@ export async function reGenerateToken(req: Request, res: Response) {
     });
   }
 }
+
+export async function logout(req: any, res: Response) {
+  const user = req.user;
+  await authService.logout(user.username);
+
+  res.json({
+    message: "User logged out",
+  });
+}
