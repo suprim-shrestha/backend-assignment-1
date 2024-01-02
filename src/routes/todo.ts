@@ -7,12 +7,14 @@ import {
   updateTodoById,
   deleteTodoById,
 } from "../controllers/todo";
+import { validateReqBody, validateReqQuery } from "../middleware/validator";
+import { getCreateTaskSchema, getTaskQuerySchema } from "../schema/todo";
 
 const router = Router();
 
-router.post("/", createTodo);
+router.post("/", validateReqBody(getCreateTaskSchema), createTodo);
 
-router.get("/", getTodos);
+router.get("/", validateReqQuery(getTaskQuerySchema), getTodos);
 
 router.get("/:id", getTodoById);
 
