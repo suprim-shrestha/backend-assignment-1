@@ -46,7 +46,7 @@ export function getUserByUsername(username: string) {
 
 export function createUser(user: ISignUp) {
   const newUser = {
-    id: users[users.length - 1].id + 1,
+    id: users[users.length - 1].id + 1 || 1,
     ...user,
     accessToken: "",
     refreshToken: "",

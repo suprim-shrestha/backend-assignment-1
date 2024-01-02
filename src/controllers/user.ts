@@ -1,21 +1,29 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import * as userService from "../services/user";
 
-export function getUsers(req: Request, res: Response) {
-  const data = userService.getUsers();
+export async function getUsers(req: Request, res: Response) {
+  const data = await userService.getUsers();
 
   return res.json({
     data,
   });
 }
 
-export function getUserById(req: Request, res: Response) {
-  const id = req.params.id;
+export async function getUserById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = req.params.id;
 
-  const data = userService.getUserById(parseInt(id));
+    const data = await userService.getUserById(parseInt(id));
 
-  return res.json({
-    data,
-  });
+    return res.json({
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
 }

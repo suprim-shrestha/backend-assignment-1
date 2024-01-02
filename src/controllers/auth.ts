@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import * as authService from "../services/auth";
 
-export async function signup(req: Request, res: Response) {
+export async function signup(req: Request, res: Response, next: NextFunction) {
   const { body } = req;
 
   try {
@@ -13,13 +13,11 @@ export async function signup(req: Request, res: Response) {
       newUser,
     });
   } catch (error) {
-    return res.json({
-      message: "Username already exists",
-    });
+    next(error);
   }
 }
 
-export async function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response, next: NextFunction) {
   const { body } = req;
 
   try {
@@ -27,13 +25,15 @@ export async function login(req: Request, res: Response) {
 
     return res.json(data);
   } catch (error) {
-    return res.status(401).json({
-      message: "Invalid username or password",
-    });
+    next(error);
   }
 }
 
-export async function reGenerateToken(req: Request, res: Response) {
+export async function reGenerateToken(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const refreshToken = req.body.refreshToken;
 
   try {
@@ -41,9 +41,7 @@ export async function reGenerateToken(req: Request, res: Response) {
 
     return res.json(data);
   } catch (error) {
-    return res.json({
-      message: "Invalid token",
-    });
+    next(error);
   }
 }
 
