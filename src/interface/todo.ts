@@ -4,3 +4,8 @@ export interface ITodo {
   completed: boolean;
   userId: number;
 }
+
+export interface QueryTodo {
+  search?: string;
+  completed?: string;
+}

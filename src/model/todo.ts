@@ -1,4 +1,4 @@
-import { ITodo } from "../interface/todo";
+import { ITodo, QueryTodo } from "../interface/todo";
 
 const todos: ITodo[] = [
   {
@@ -27,19 +27,27 @@ const todos: ITodo[] = [
   },
 ];
 
-export function getTodos(userId: number) {
-  const todoList = todos.filter((todo) => todo.userId === userId);
-  return todoList;
+export function getTodos(userId: number, query: QueryTodo) {
+  const { search, completed } = query;
+  const completedBool = completed === "true" ? true : false;
+  return todos.filter(
+    (todo) =>
+      todo.userId === userId &&
+      (search
+        ? todo.title.toLowerCase().includes(search.toLowerCase())
+        : true) &&
+      (completed ? todo.completed === completedBool : true)
+  );
 }
 
 export function getTodoById(id: number, userId: number) {
   const filteredTodo = todos.filter((todo) => todo.userId === userId);
-  return filteredTodo.find((todo) => todo.id === id) || null;
+  return filteredTodo.find((todo) => todo.id === id);
 }
 
 export function createTodo(title: string, userId: number) {
   const newTodo = {
-    id: todos[todos.length - 1].id + 1,
+    id: todos[todos.length - 1].id + 1 || 1,
     title,
     completed: false,
     userId,
