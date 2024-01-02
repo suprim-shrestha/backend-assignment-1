@@ -103,5 +103,4 @@ export async function logout(username: string) {
   const user = userService.getUserByUsername(username)!;
   user.accessToken = "";
   user.refreshToken = "";
-  console.log(user);
 }

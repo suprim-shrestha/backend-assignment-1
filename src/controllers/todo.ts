@@ -5,7 +5,6 @@ import * as todoService from "../services/todo";
 export async function createTodo(req: any, res: Response) {
   const { title } = req.body;
   const user = req.user;
-  console.log(user);
 
   const todo = await todoService.createTodo(title, user.id);
 
