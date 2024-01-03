@@ -1,8 +1,10 @@
-import dotenv from "dotenv";
+import { config } from "dotenv";
 
-dotenv.config();
+const pathToEnv = __dirname + "/../.env";
 
-const config = {
+config({ path: pathToEnv });
+
+const serverConfig = {
   serverPort: process.env.SERVER_PORT || 3000,
   saltRounds:
     (process.env.SALT_ROUNDS && Number(process.env.SALT_ROUNDS)) || 10,
@@ -12,6 +14,17 @@ const config = {
     accessTokenExpiry: process.env.ACCESS_TOKEN_EXPIRY,
     refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRY,
   },
+
+  database: {
+    charset: "utf8",
+    client: process.env.DB_CLIENT,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    password: process.env.DB_PASSWORD,
+    port: Number(process.env.DB_PORT),
+    timezone: "UTC",
+    user: process.env.DB_USER,
+  },
 };
 
-export default config;
+export default serverConfig;
