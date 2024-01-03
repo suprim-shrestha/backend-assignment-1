@@ -7,5 +7,5 @@ export interface ITodo {
 
 export interface QueryTodo {
   search?: string;
-  completed?: string;
+  completed?: boolean;
 }

@@ -29,14 +29,14 @@ const todos: ITodo[] = [
 
 export function getTodos(userId: number, query: QueryTodo) {
   const { search, completed } = query;
-  const completedBool = completed === "true" ? true : false;
+
   return todos.filter(
     (todo) =>
       todo.userId === userId &&
       (search
         ? todo.title.toLowerCase().includes(search.toLowerCase())
         : true) &&
-      (completed ? todo.completed === completedBool : true)
+      (completed ? todo.completed === completed : true)
   );
 }
 
