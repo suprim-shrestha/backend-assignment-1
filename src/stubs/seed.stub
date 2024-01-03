@@ -8,7 +8,7 @@ const TABLE_NAME = 'table_name';
  * @param   {Knex} knex
  * @returns {Promise}
  */
-export function seed(knex: Knex): Promise<void> {
+export async function seed(knex: Knex): Promise<void> {
   return knex(TABLE_NAME)
     .del()
     .then(() => {
