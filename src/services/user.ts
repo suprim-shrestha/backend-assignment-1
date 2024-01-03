@@ -1,13 +1,13 @@
 import NotFoundError from "../error/notFoundError";
 import { ISignUp } from "../interface/auth";
-import * as userModel from "../model/user";
+import UserModel from "../model/user";
 
 export async function getUsers() {
-  return userModel.getUsers();
+  return UserModel.getUsers();
 }
 
 export async function getUserById(id: number) {
-  const user = userModel.getUserById(id);
+  const user = UserModel.getUserById(id);
 
   if (!user) {
     throw new NotFoundError("User Not Found");
@@ -17,19 +17,33 @@ export async function getUserById(id: number) {
 }
 
 export async function getUserByUsername(username: string) {
-  return userModel.getUserByUsername(username);
+  return UserModel.getUserByUsername(username);
 }
 
 export async function createUser(user: ISignUp) {
-  return userModel.createUser(user);
+  return UserModel.createUser(user);
 }
 
-export async function updateUser(id: number, userDetail: Object) {
-  const user = userModel.updateUser(id, userDetail);
+export async function updateUser(id: number, userDetail: ISignUp) {
+  const user = UserModel.getUserById(id);
 
   if (!user) {
     throw new NotFoundError("User Not Found");
   }
 
-  return user;
+  await UserModel.updateUser(id, userDetail);
+
+  const updatedUser = await UserModel.getUserById(id);
+
+  return updatedUser;
+}
+
+export async function deleteUser(id: number) {
+  const user = UserModel.getUserById(id);
+
+  if (!user) {
+    throw new NotFoundError("User Not Found");
+  }
+
+  await UserModel.deleteUser(id);
 }

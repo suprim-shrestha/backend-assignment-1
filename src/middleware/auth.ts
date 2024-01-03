@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
 import config from "../config";
-import { getUserByUsername } from "../model/user";
 import UnauthenticatedError from "../error/unauthenticatedError";
 
 export const auth = async (req: any, res: Response, next: NextFunction) => {
@@ -13,14 +12,9 @@ export const auth = async (req: any, res: Response, next: NextFunction) => {
       throw new UnauthenticatedError("No access token");
     }
 
-    const payload: any = jwt.verify(token, config.jwt.accessTokenSecret!);
+    const user = jwt.verify(token, config.jwt.accessTokenSecret!);
 
-    const user = getUserByUsername(payload.username);
-    if (user?.accessToken === token) {
-      req.user = user;
-    } else {
-      throw new UnauthenticatedError("Unauthorized");
-    }
+    req.user = user;
 
     next();
   } catch (error) {

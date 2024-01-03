@@ -1,3 +1,4 @@
+import HttpStatus from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
 
 import * as todoService from "../services/todo";
@@ -6,9 +7,11 @@ export async function createTodo(req: any, res: Response) {
   const { title } = req.body;
   const user = req.user;
 
-  const todo = await todoService.createTodo(title, user.id);
+  await todoService.createTodo(title, user.id);
 
-  res.status(201).json(todo);
+  res.status(HttpStatus.CREATED).json({
+    message: "Todo created successfully",
+  });
 }
 
 export async function getTodos(req: any, res: Response) {
@@ -60,7 +63,9 @@ export async function deleteTodoById(
 
     const todo = await todoService.deleteTodoById(parseInt(id), user.id);
 
-    res.json({ deletedTodo: todo });
+    res.json({
+      message: "Todo deleted successfully",
+    });
   } catch (error) {
     next(error);
   }

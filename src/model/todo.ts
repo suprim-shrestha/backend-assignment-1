@@ -1,79 +1,42 @@
 import { ITodo, QueryTodo } from "../interface/todo";
+import BaseModel from "./baseModel";
 
-const todos: ITodo[] = [
-  {
-    id: 1,
-    title: "Task 1 of User 1",
-    completed: false,
-    userId: 1,
-  },
-  {
-    id: 2,
-    title: "Task 2 of User 1",
-    completed: false,
-    userId: 1,
-  },
-  {
-    id: 3,
-    title: "Task 1 of User 2",
-    completed: false,
-    userId: 2,
-  },
-  {
-    id: 4,
-    title: "Task 1 of User 3",
-    completed: false,
-    userId: 3,
-  },
-];
+export default class TodoModel extends BaseModel {
+  static async getTodos() {
+    return this.queryBuilder()
+      .select({
+        id: "t.id",
+        title: "title",
+        completed: "completed",
+        createdBy: "created_by",
+        username: "u.username",
+      })
+      .from({ t: "tasks" })
+      .leftJoin({ u: "users" }, { "t.created_by": "u.id" });
+  }
 
-export function getTodos(userId: number, query: QueryTodo) {
-  const { search, completed } = query;
+  static async getTodoById(id: number, userId: number) {
+    return this.queryBuilder()
+      .select({
+        id: "id",
+        title: "title",
+        completed: "completed",
+        createdBy: "created_by",
+      })
+      .from("tasks")
+      .where({ id, createdBy: userId })
+      .first();
+  }
 
-  return todos.filter(
-    (todo) =>
-      todo.userId === userId &&
-      (search
-        ? todo.title.toLowerCase().includes(search.toLowerCase())
-        : true) &&
-      (completed ? todo.completed === completed : true)
-  );
-}
+  static async createTodo(todo: ITodo) {
+    return this.queryBuilder().insert(todo).table("tasks");
+  }
 
-export function getTodoById(id: number, userId: number) {
-  const filteredTodo = todos.filter((todo) => todo.userId === userId);
-  return filteredTodo.find((todo) => todo.id === id);
-}
+  static async updateTodo(id: number, todo: ITodo) {
+    return this.queryBuilder().update(todo).table("tasks").where({ id });
+  }
 
-export function createTodo(title: string, userId: number) {
-  const newTodo = {
-    id: todos[todos.length - 1].id + 1 || 1,
-    title,
-    completed: false,
-    userId,
-  };
-
-  todos.push(newTodo);
-
-  return newTodo;
-}
-
-export function updateTodoById(id: number, userId: number) {
-  const todo = getTodoById(id, userId);
-  if (!todo) return null;
-
-  todo.completed = !todo.completed;
-
-  return todo;
-}
-
-export function deleteTodoById(id: number, userId: number) {
-  const todoToDelete = getTodoById(id, userId);
-  const todoIndex = todos.findIndex((todo) => todoToDelete === todo);
-
-  if (todoIndex === -1) return null;
-
-  const deletedTodo = todos.splice(todoIndex, 1);
-
-  return deletedTodo;
+  static async deleteTodo(id: number) {
+    return this.queryBuilder().table("tasks").where({ id }).del();
+  }
 }

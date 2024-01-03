@@ -1,3 +1,4 @@
+import HttpStatus from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
 
 import * as authService from "../services/auth";
@@ -23,7 +24,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const data = await authService.login(body);
 
-    return res.json(data);
+    return res.status(HttpStatus.CREATED).json(data);
   } catch (error) {
     next(error);
   }
