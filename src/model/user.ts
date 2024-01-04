@@ -1,14 +1,32 @@
 import BaseModel from "./baseModel";
 import { ISignUp } from "../interface/auth";
+import { GetUsersFilterQuery } from "../interface/user";
 
 export default class UserModel extends BaseModel {
-  static async getUsers() {
-    return this.queryBuilder()
+  static async getUsers(params: GetUsersFilterQuery) {
+    const query = this.queryBuilder()
       .select({
         id: "id",
         username: "username",
       })
+      .whereRaw("LOWER(username) like ?", [
+        `%${params.username.toLowerCase()}%`,
+      ])
       .from("users");
+
+    query.offset(params.offset).limit(params.limit);
+
+    return query;
+  }
+
+  static async countAll(params: GetUsersFilterQuery) {
+    return this.queryBuilder()
+      .table("users")
+      .whereRaw("LOWER(username) like ?", [
+        `%${params.username.toLowerCase()}%`,
+      ])
+      .count({ count: "id" })
+      .first();
   }
 
   static async getUserById(id: number) {

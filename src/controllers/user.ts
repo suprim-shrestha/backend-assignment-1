@@ -1,9 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
 import * as userService from "../services/user";
+import { GetAllUsersQuery } from "../interface/user";
 
 export async function getUsers(req: Request, res: Response) {
-  const data = await userService.getUsers();
+  const query = req.query;
+
+  const data = await userService.getUsers(query as unknown as GetAllUsersQuery);
 
   return res.json({
     data,

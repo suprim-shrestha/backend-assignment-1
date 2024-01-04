@@ -1,9 +1,25 @@
 import NotFoundError from "../error/notFoundError";
 import { ISignUp } from "../interface/auth";
 import UserModel from "../model/user";
+import { GetAllUsersQuery } from "../interface/user";
+import { buildMeta, getPaginationOptions } from "../util/pagination";
 
-export async function getUsers() {
-  return UserModel.getUsers();
+export async function getUsers(query: GetAllUsersQuery) {
+  const { page, size } = query;
+
+  const pageDetails = getPaginationOptions({ page, size });
+
+  const users = await UserModel.getUsers({ ...pageDetails, ...query });
+  const count = await UserModel.countAll({ ...pageDetails, ...query });
+
+  const total = count.count;
+
+  const meta = buildMeta(total, size, page);
+
+  return {
+    data: users,
+    meta,
+  };
 }
 
 export async function getUserById(id: number) {
