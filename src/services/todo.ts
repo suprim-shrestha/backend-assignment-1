@@ -17,7 +17,7 @@ export async function getTodos(userId: number, query: QueryTodo) {
   const pageDetails = getPaginationOptions({ page, size });
 
   const todos = await TodoModel.getTodos({ ...pageDetails, ...query, userId });
-  const count = await TodoModel.countAll(userId);
+  const count = await TodoModel.countAll({ ...pageDetails, ...query, userId });
 
   const total = count.count;
 

@@ -22,10 +22,12 @@ export default class TodoModel extends BaseModel {
     return query;
   }
 
-  static async countAll(userId: number) {
+  static async countAll(params: TodoFilterQuery) {
     return this.queryBuilder()
       .table("tasks")
-      .where({ created_by: userId })
+      .where({ createdBy: params.userId })
+      .where(params.completed ? { completed: params.completed } : true)
+      .whereRaw("LOWER(title) like ?", [`%${params.search?.toLowerCase()}%`])
       .count({ count: "id" })
       .first();
   }
