@@ -2,6 +2,7 @@ import HttpStatus from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
 
 import * as todoService from "../services/todo";
+import { QueryTodo } from "../interface/todo";
 
 export async function createTodo(req: any, res: Response) {
   const { title } = req.body;
@@ -17,7 +18,10 @@ export async function createTodo(req: any, res: Response) {
 export async function getTodos(req: any, res: Response) {
   const query = req.query;
   const user = req.user;
-  const todos = await todoService.getTodos(user.id, query);
+  const todos = await todoService.getTodos(
+    user.id,
+    query as unknown as QueryTodo
+  );
 
   res.json(todos);
 }

@@ -1,9 +1,9 @@
-import { ITodo, QueryTodo } from "../interface/todo";
+import { ITodo, QueryTodo, TodoFilterQuery } from "../interface/todo";
 import BaseModel from "./baseModel";
 
 export default class TodoModel extends BaseModel {
-  static async getTodos() {
-    return this.queryBuilder()
+  static async getTodos(params: TodoFilterQuery) {
+    const query = this.queryBuilder()
       .select({
         id: "t.id",
         title: "title",
@@ -12,7 +12,22 @@ export default class TodoModel extends BaseModel {
         username: "u.username",
       })
       .from({ t: "tasks" })
+      .where({ createdBy: params.userId })
+      .where(params.completed ? { completed: params.completed } : true)
+      .whereRaw("LOWER(title) like ?", [`%${params.search?.toLowerCase()}%`])
       .leftJoin({ u: "users" }, { "t.created_by": "u.id" });
+
+    query.offset(params.offset).limit(params.limit);
+
+    return query;
+  }
+
+  static async countAll(userId: number) {
+    return this.queryBuilder()
+      .table("tasks")
+      .where({ created_by: userId })
+      .count({ count: "id" })
+      .first();
   }
 
   static async getTodoById(id: number, userId: number) {
