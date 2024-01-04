@@ -7,12 +7,9 @@ export async function signup(req: Request, res: Response, next: NextFunction) {
   const { body } = req;
 
   try {
-    const newUser = await authService.signup(body);
+    const data = await authService.signup(body);
 
-    return res.json({
-      message: "User signed up",
-      newUser,
-    });
+    return res.json(data);
   } catch (error) {
     next(error);
   }
