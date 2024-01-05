@@ -15,5 +15,5 @@ export const getTaskQuerySchema = Joi.object({
 
   search: Joi.string().default(""),
 
-  completed: Joi.boolean().default(false),
+  completed: Joi.boolean(),
 });
